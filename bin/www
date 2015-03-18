@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('ssltest:server');
 var http = require('http');
+var path = require('path');
 var https = require('https');
 
 var log = console.log.bind(console);
@@ -25,6 +26,8 @@ var privateKey = fs.readFileSync(sslDir+'example.com.private-key'),
 
 var port = normalizePort(process.env.PORT || '9000');
 app.set('port', port);
+
+log('using port', port)
 
 /**
  * Create HTTPS server.
@@ -76,6 +79,8 @@ function onError(error) {
   var bind = typeof port === 'string'
     ? 'Pipe ' + port
     : 'Port ' + port;
+
+
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
