@@ -8,10 +8,13 @@ var app = require('../app');
 var debug = require('debug')('ssltest:server');
 var http = require('http');
 var path = require('path');
+var helmet = require('helmet');
 var fs = require('fs');
 var https = require('https');
 
 var log = console.log.bind(console);
+
+app.use(helmet());
 
 global.appRoot = path.dirname(path.resolve(__dirname))
 
