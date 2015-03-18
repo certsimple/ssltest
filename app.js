@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var helmet = require('helmet');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -13,6 +13,16 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+var ONE_YEAR = 31536000000;
+app.use(helmet.hsts({
+    maxAge: ONE_YEAR,
+    includeSubdomains: true,
+    force: true
+}));
+
+app.use(helmet.hidePoweredBy({ setTo: 'swag' }));
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
