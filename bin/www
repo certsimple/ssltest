@@ -15,7 +15,13 @@ var https = require('https');
 var log = console.log.bind(console);
 
 var ONE_YEAR = 31536000000;
-app.use(helmet.hsts({ maxAge: ONE_YEAR }));
+app.use(helmet.hsts({
+    maxAge: ONE_YEAR,
+    includeSubdomains: true,
+    force: true
+}));
+
+app.use(helmet.hidePoweredBy({ setTo: 'swag' }));
 
 global.appRoot = path.dirname(path.resolve(__dirname))
 
