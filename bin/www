@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('ssltest:server');
 var http = require('http');
 var path = require('path');
+var fs = require('fs');
 var https = require('https');
 
 var log = console.log.bind(console);
