@@ -7,19 +7,34 @@
 var app = require('../app');
 var debug = require('debug')('ssltest:server');
 var http = require('http');
+var https = require('https');
+
+var log = console.log.bind(console);
+
+global.appRoot = path.dirname(path.resolve(__dirname))
+
+// Should be the top level of our express app
+var sslDir = global.appRoot+'/ssl/'
+var privateKey = fs.readFileSync(sslDir+'example.com.private-key'),
+    certificate = fs.readFileSync(sslDir+'example.crt'),
+    certificateAuthority = fs.readFileSync(sslDir+'example-ca.crt');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '9000');
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Create HTTPS server.
  */
+var server = https.createServer({
+    key: privateKey,
+    cert: certificate,
+    ca: certificateAuthority,
+}, app);
 
-var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
