@@ -37,7 +37,7 @@ var server = https.createServer({
     key: privateKey,
     cert: certificate,
     ca: certificateAuthority,
-    // https://wiki.mozilla.org/Security/Server_Side_TLS
+    // cipher list from https://iojs.org/api/tls.html
     ciphers: [
         "ECDHE-RSA-AES256-SHA384",
         "DHE-RSA-AES256-SHA384",
