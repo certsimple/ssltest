@@ -14,12 +14,12 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// var ONE_YEAR = 31536000000;
-// app.use(helmet.hsts({
-//     maxAge: ONE_YEAR,
-//     includeSubdomains: true,
-//     force: true
-// }));
+var ONE_YEAR = 31536000000;
+app.use(helmet.hsts({
+    maxAge: ONE_YEAR,
+    includeSubdomains: true,
+    force: true
+}));
 
 // app.use(helmet.hidePoweredBy({ setTo: 'swag' }));
 
