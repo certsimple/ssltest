@@ -54,8 +54,8 @@ var server = https.createServer({
         "!MD5",
         "!PSK",
         "!SRP",
-    ]    "!CAMELLIA"
-    .join(':'),
+        "!CAMELLIA"
+    ].join(':'),
     honorCipherOrder: true
 }, app);
 
