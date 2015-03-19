@@ -37,6 +37,17 @@ var server = https.createServer({
     key: privateKey,
     cert: certificate,
     ca: certificateAuthority,
+    // default node 0.12 ciphers with RC4 disabled
+    ciphers: [
+      "ECDHE-RSA-AES128-SHA256",
+      "DHE-RSA-AES128-SHA256",
+      "AES128-GCM-SHA256",
+      "!RC4",
+      "HIGH",
+      "!MD5",
+      "!aNULL"
+    ].join(':'),
+
     // cipher list from https://iojs.org/api/tls.html
     // ciphers: [
     //     "ECDHE-RSA-AES256-SHA384",
@@ -54,9 +65,9 @@ var server = https.createServer({
     //     "!MD5",
     //     "!PSK",
     //     "!SRP",
-    //     "!CAMELLIA"
-    // ].join(':'),
-    // honorCipherOrder: true
+    // ]    "!CAMELLIA"
+    // .join(':'),
+    honorCipherOrder: true
 }, app);
 
 
