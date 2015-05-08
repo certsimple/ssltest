@@ -17,9 +17,9 @@ global.appRoot = path.dirname(path.resolve(__dirname))
 
 // Should be the top level of our express app
 var sslDir = global.appRoot+'/ssl/'
-var privateKey = fs.readFileSync(sslDir+'example.com.private-key'),
-    certificate = fs.readFileSync(sslDir+'example.crt'),
-    certificateAuthority = fs.readFileSync(sslDir+'example-ca.crt');
+var privateKey = fs.readFileSync(sslDir+'ssltest.certsimple.com.private-key'),
+    certificate = fs.readFileSync(sslDir+'ssltest.certsimple.com.crt'),
+    certificateAuthority = fs.readFileSync(sslDir+'digicert-ca.crt');
 
 /**
  * Get port from environment and store in Express.
