@@ -2,6 +2,8 @@
 
 ## Usage
 
+Required **node 0.12**
+
 npm install .
 
 Add your certs to /ssl. The following are expected:
