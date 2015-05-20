@@ -10,16 +10,18 @@ var http = require('http');
 var path = require('path');
 var fs = require('fs');
 var https = require('https');
-
+var ocsp = require('ocsp');
 var log = console.log.bind(console);
 
 global.appRoot = path.dirname(path.resolve(__dirname))
 
+var cache = new ocsp.Cache();
+
 // Should be the top level of our express app
 var sslDir = global.appRoot+'/ssl/'
 var privateKey = fs.readFileSync(sslDir+'ssltest.certsimple.com.private-key'),
-    certificate = fs.readFileSync(sslDir+'ssltest.certsimple.com.crt'),
-    certificateAuthority = fs.readFileSync(sslDir+'digicert-ca.crt');
+	certificate = fs.readFileSync(sslDir+'ssltest.certsimple.com.crt'),
+	certificateAuthority = fs.readFileSync(sslDir+'digicert-ca.crt');
 
 /**
  * Get port from environment and store in Express.
@@ -34,29 +36,34 @@ log('using port', port)
  * Create HTTPS server.
  */
 var server = https.createServer({
-    key: privateKey,
-    cert: certificate,
-    ca: certificateAuthority,
-    // cipher list from https://iojs.org/api/tls.html
-    ciphers: [
-        "ECDHE-RSA-AES256-SHA384",
-        "DHE-RSA-AES256-SHA384",
-        "ECDHE-RSA-AES256-SHA256",
-        "DHE-RSA-AES256-SHA256",
-        "ECDHE-RSA-AES128-SHA256",
-        "DHE-RSA-AES128-SHA256",
-        "HIGH",
-        "!aNULL",
-        "!eNULL",
-        "!EXPORT",
-        "!DES",
-        "!RC4",
-        "!MD5",
-        "!PSK",
-        "!SRP",
-        "!CAMELLIA"
-    ].join(':'),
-    honorCipherOrder: true
+	key: privateKey,
+	cert: certificate,
+	ca: certificateAuthority,
+	// cipher list from node 2.0.2 https://github.com/nodejs/io.js/blob/master/lib/tls.js
+	ciphers: [
+		'ECDHE-RSA-AES128-GCM-SHA256',
+		'ECDHE-ECDSA-AES128-GCM-SHA256',
+		'ECDHE-RSA-AES256-GCM-SHA384',
+		'ECDHE-ECDSA-AES256-GCM-SHA384',
+		'DHE-RSA-AES128-GCM-SHA256',
+		'ECDHE-RSA-AES128-SHA256',
+		'DHE-RSA-AES128-SHA256',
+		'ECDHE-RSA-AES256-SHA384',
+		'DHE-RSA-AES256-SHA384',
+		'ECDHE-RSA-AES256-SHA256',
+		'DHE-RSA-AES256-SHA256',
+		'HIGH',
+		'!aNULL',
+		'!eNULL',
+		'!EXPORT',
+		'!DES',
+		'!RC4',
+		'!MD5',
+		'!PSK',
+		'!SRP',
+		'!CAMELLIA'
+	].join(':'),
+	honorCipherOrder: true
 }, app);
 
 
@@ -68,64 +75,80 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+// https://nodejs.org/api/tls.html#tls_event_ocsprequest
+server.on('OCSPRequest', function(cert, issuer, cb) {
+	ocsp.getOCSPURI(cert, function(err, uri) {
+		if (err)
+			return cb(err);
+
+		var req = ocsp.request.generate(cert, issuer);
+		var options = {
+			url: uri,
+			ocsp: req.data
+		};
+
+		cache.request(req.id, options, cb);
+	});
+});
+
 /**
  * Normalize a port into a number, string, or false.
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+	var port = parseInt(val, 10);
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
+	if (isNaN(port)) {
+		// named pipe
+		return val;
+	}
 
-  if (port >= 0) {
-    // port number
-    return port;
-  }
+	if (port >= 0) {
+		// port number
+		return port;
+	}
 
-  return false;
+	return false;
 }
 
 /**
- * Event listener for HTTP server "error" event.
+ * Event listener for HTTP server 'error' event.
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+	if (error.syscall !== 'listen') {
+	throw error;
+	}
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+	var bind = typeof port === 'string'
+	? 'Pipe ' + port
+	: 'Port ' + port;
 
 
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+	// handle specific listen errors with friendly messages
+	switch (error.code) {
+		case 'EACCES':
+			console.error(bind + ' requires elevated privileges');
+			process.exit(1);
+			break;
+		case 'EADDRINUSE':
+			console.error(bind + ' is already in use');
+			process.exit(1);
+			break;
+		default:
+			throw error;
+	}
 }
 
 /**
- * Event listener for HTTP server "listening" event.
+ * Event listener for HTTP server 'listening' event.
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+	var addr = server.address();
+	var bind = typeof addr === 'string'
+	? 'pipe ' + addr
+	: 'port ' + addr.port;
+	debug('Listening on ' + bind);
 }
