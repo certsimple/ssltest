@@ -2,7 +2,7 @@
 
 ## Usage
 
-Required **node 0.12**
+Requires **node 0.12**
 
 npm install .
 
