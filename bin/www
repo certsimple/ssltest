@@ -19,9 +19,9 @@ var cache = new ocsp.Cache();
 
 // Should be the top level of our express app
 var sslDir = global.appRoot+'/ssl/'
-var privateKey = fs.readFileSync(sslDir+'ssltest.certsimple.com.key'),
-	certificate = fs.readFileSync(sslDir+'ssltest.certsimple.com.crt'),
-	certificateAuthority = fs.readFileSync(sslDir+'digicert-ca.crt');
+var privateKey = fs.readFileSync(sslDir+'example.com.key'),
+	certificate = fs.readFileSync(sslDir+'example.com.crt'),
+	certificateAuthority = fs.readFileSync(sslDir+'example-ca.crt');
 
 /**
  * Get port from environment and store in Express.
