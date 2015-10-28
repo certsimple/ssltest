@@ -19,7 +19,7 @@ var cache = new ocsp.Cache();
 
 // Should be the top level of our express app
 var sslDir = global.appRoot+'/ssl/'
-var privateKey = fs.readFileSync(sslDir+'ssltest.certsimple.com.private-key'),
+var privateKey = fs.readFileSync(sslDir+'ssltest.certsimple.com.key'),
 	certificate = fs.readFileSync(sslDir+'ssltest.certsimple.com.crt'),
 	certificateAuthority = fs.readFileSync(sslDir+'digicert-ca.crt');
 
@@ -39,30 +39,6 @@ var server = https.createServer({
 	key: privateKey,
 	cert: certificate,
 	ca: certificateAuthority,
-	// cipher list from node 2.0.2 https://github.com/nodejs/io.js/blob/master/lib/tls.js
-	ciphers: [
-		'ECDHE-RSA-AES128-GCM-SHA256',
-		'ECDHE-ECDSA-AES128-GCM-SHA256',
-		'ECDHE-RSA-AES256-GCM-SHA384',
-		'ECDHE-ECDSA-AES256-GCM-SHA384',
-		'DHE-RSA-AES128-GCM-SHA256',
-		'ECDHE-RSA-AES128-SHA256',
-		'DHE-RSA-AES128-SHA256',
-		'ECDHE-RSA-AES256-SHA384',
-		'DHE-RSA-AES256-SHA384',
-		'ECDHE-RSA-AES256-SHA256',
-		'DHE-RSA-AES256-SHA256',
-		'HIGH',
-		'!aNULL',
-		'!eNULL',
-		'!EXPORT',
-		'!DES',
-		'!RC4',
-		'!MD5',
-		'!PSK',
-		'!SRP',
-		'!CAMELLIA'
-	].join(':'),
 	honorCipherOrder: true
 }, app);
 
@@ -76,20 +52,20 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 // https://nodejs.org/api/tls.html#tls_event_ocsprequest
-server.on('OCSPRequest', function(cert, issuer, cb) {
-	ocsp.getOCSPURI(cert, function(err, uri) {
-		if (err)
-			return cb(err);
+// server.on('OCSPRequest', function(cert, issuer, cb) {
+// 	ocsp.getOCSPURI(cert, function(err, uri) {
+// 		if (err)
+// 			return cb(err);
 
-		var req = ocsp.request.generate(cert, issuer);
-		var options = {
-			url: uri,
-			ocsp: req.data
-		};
+// 		var req = ocsp.request.generate(cert, issuer);
+// 		var options = {
+// 			url: uri,
+// 			ocsp: req.data
+// 		};
 
-		cache.request(req.id, options, cb);
-	});
-});
+// 		cache.request(req.id, options, cb);
+// 	});
+// });
 
 /**
  * Normalize a port into a number, string, or false.
