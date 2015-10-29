@@ -1,0 +1,14 @@
+[Unit]
+Description=ssltest
+
+[Service]
+ExecStart=/var/www/ssltest/bin/www
+Restart=always
+User=nobody
+Group=nobody
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/var/www/ssltest
+
+[Install]
+WantedBy=multi-user.target
