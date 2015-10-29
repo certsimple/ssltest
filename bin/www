@@ -38,8 +38,7 @@ log('using port', port)
 var server = https.createServer({
 	key: privateKey,
 	cert: certificate,
-	ca: certificateAuthority,
-	honorCipherOrder: true
+	ca: certificateAuthority
 }, app);
 
 

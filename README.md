@@ -1,5 +1,7 @@
 # A demo Node/Express 4 app that gets A+ on the Qualys SSL Labs SSL Server Test
 
+This app is fairly boring right now, since the authors patched node itself to implement the correct settings.
+
 ## Usage
 
 Requires **node 4.2 +**
@@ -30,4 +32,4 @@ MIT
 
 ## Authors
 
-Mike MacCana <mike.maccana@gmail.com> @mikemaccana
+Mike MacCana <mike@certsimple.com> @mikemaccana
